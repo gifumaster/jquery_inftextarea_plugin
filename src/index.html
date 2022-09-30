@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<script
+		  src="https://code.jquery.com/jquery-3.6.1.min.js"
+		  integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+		  crossorigin="anonymous"></script>
+		<script src="./inftextarea.js"></script>
+	</head>
+	<body>
+	<div id="hoge"></div>
+	<button id="submit">送信</button>
+
+	<hr />
+	<textarea id="target"></textarea>
+	<script>
+		$(function(){
+			$('#hoge').infTextarea({
+				buttonPlusString: '追加する',
+				outputElement: 'target'
+			});
+
+			// 送信時にgetResultを叩くと内容をすべて取得できます。
+			$('#submit').click(function(){
+				alert(a.getResult());
+			})
+		});
+	</script>
+	<style>
+		._inf_div {
+
+		}
+		._inf_textarea{
+
+		}
+		._inf_button{
+
+		}
+		._inf_button_plus{
+
+		}
+		._inf_button_minus{
+
+		}
+	</style>
+
+
+	</body>
+</html>
