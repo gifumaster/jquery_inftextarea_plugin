@@ -7,42 +7,33 @@
 		<script src="./inftextarea.js"></script>
 	</head>
 	<body>
-	<div id="hoge"></div>
-	<button id="submit">送信</button>
+	<div class="targetArea" data-name="商品1"></div>
+	<hr />
+	<div class="targetArea" data-name="商品2"></div>
+	<hr />
+	<div class="targetArea" data-name="商品3"></div>
 
 	<hr />
-	<textarea id="target"></textarea>
+	<input id="target_1"></input>
+	<input id="target_2"></input>
+	<input id="target_3"></input>
+	<input id="target_4"></input>
+	<input id="target_5"></input>
+	<input id="target_6"></input>
+	<input id="target_7"></input>
+	<input id="target_8"></input>
+	<input id="target_9"></input>
+	<input id="target_10"></input>
 	<script>
 		$(function(){
-			$('#hoge').infTextarea({
-				buttonPlusString: '追加する',
-				outputElement: 'target'
+			$('.targetArea').infTextarea({
+				outputTextElementBaseID: 'target',
+				outputCountElementID: 'target2',
+				cssClassForTextarea: '',
+				cssClassForButtonPlus: '',
+				cssClassForButtonMinus: '',
 			});
-
-			// 送信時にgetResultを叩くと内容をすべて取得できます。
-			$('#submit').click(function(){
-				alert(a.getResult());
-			})
 		});
 	</script>
-	<style>
-		._inf_div {
-
-		}
-		._inf_textarea{
-
-		}
-		._inf_button{
-
-		}
-		._inf_button_plus{
-
-		}
-		._inf_button_minus{
-
-		}
-	</style>
-
-
 	</body>
 </html>
