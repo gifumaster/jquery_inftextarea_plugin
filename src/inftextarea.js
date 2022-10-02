@@ -56,8 +56,7 @@
                     concatText += '【' + title + '】\n';
                 }
 
-                if($this.val() !== '')
-                {
+                if ($this.val() !== '') {
                     concatText += '・' + $this.val() + '\n';
                     count++;
                 }
@@ -65,7 +64,7 @@
                 currentTitle = title;
             });
 
-            return [concatText,count];
+            return [concatText, count];
         }
 
         function generateTextarea(groupCount) {
@@ -74,14 +73,13 @@
             if (setting.textareaClass !== '') {
                 textarea.addClass(setting.textareaClass).addClass(setting.textareaClass + '_group' + groupCount);
             }
-            if (setting.cssClassForTextarea !== '')
-            {
+            if (setting.cssClassForTextarea !== '') {
                 textarea.addClass(setting.cssClassForTextarea);
             }
 
             if (setting.outputElement !== '') {
                 textarea.change(function () {
-                    [text,count] = getResult();
+                    [text, count] = getResult();
                     $('#' + setting.outputTextElementID).val(text);
                     $('#' + setting.outputCountElementID).val(count);
                 });
@@ -98,8 +96,7 @@
                     $('._inf_button_plus').prop('disabled', false).attr('title', '');
                 }
             });
-            if (setting.cssClassForButtonMinus !== '')
-            {
+            if (setting.cssClassForButtonMinus !== '') {
                 minusButton.addClass(setting.cssClassForButtonMinus);
             }
 
@@ -115,8 +112,7 @@
                     $('._inf_button_plus').prop('disabled', true).attr('title', 'これ以上増やせません');
                 }
             });
-            if (setting.cssClassForButtonPlus !== '')
-            {
+            if (setting.cssClassForButtonPlus !== '') {
                 minusButton.addClass(setting.cssClassForButtonPlus);
             }
 
