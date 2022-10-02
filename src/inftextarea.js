@@ -15,7 +15,7 @@
             // テキストのカウント対象のクラス。（基本いじらなくて良い）複数種類設置する場合に指定する。
             textareaClass: '_inf_target_textarea',
             // 要素に結果を出力する場合に指定。
-            outputTextElementID: ''
+            outputTextElementBaseID: ''
         }
         let setting = $.extend(defaults, options);
 
@@ -28,10 +28,15 @@
             const localCount = groupCount;
             let $this = $(this);
 
-            for (let i = 0; i < setting.initialTextAreaLength; i++) {
-                $this.append(generateTextarea(localCount));
-            }
+            const targetData = convertDataName($this.data('name'));
+            const result = restore($this,targetData,localCount);
 
+            if(!result)
+            {
+                for (let i = 0; i < setting.initialTextAreaLength; i++) {
+                    $this.append(generateTextarea(localCount));
+                }
+            }
             groupCount++;
         });
 
@@ -44,32 +49,29 @@
         }
 
         function getResult() {
-            let currentTitle = null;
-            let concatText = '';
-            let count = 0;
+            let textArray = [];
 
             $('.' + setting.textareaClass).each(function () {
                 const $this = $(this);
-                const title = $this.parent().parent().data('name');
-
-                if (title !== currentTitle) {
-                    concatText += '【' + title + '】\n';
-                }
+                const title = convertDataName($this.parent().parent().data('name'));
 
                 if ($this.val() !== '') {
-                    concatText += '・' + $this.val() + '\n';
-                    count++;
+                    const concatText = '【' + title + '】：' + $this.val() + '\n';
+                    textArray.push(concatText);
                 }
-
-                currentTitle = title;
             });
 
-            return [concatText, count];
+            return textArray;
         }
 
-        function generateTextarea(groupCount) {
+        function convertDataName(string)
+        {
+            return string.replace('【','').replace('】','');
+        }
 
-            const textarea = $('<input>').addClass('_inf_textarea');
+        function generateTextarea(groupCount,initValue = '') {
+
+            const textarea = $('<input>').addClass('_inf_textarea').val(initValue);
             if (setting.textareaClass !== '') {
                 textarea.addClass(setting.textareaClass).addClass(setting.textareaClass + '_group' + groupCount);
             }
@@ -79,9 +81,7 @@
 
             if (setting.outputElement !== '') {
                 textarea.change(function () {
-                    [text, count] = getResult();
-                    $('#' + setting.outputTextElementID).val(text);
-                    $('#' + setting.outputCountElementID).val(count);
+                    update();
                 });
             }
 
@@ -95,6 +95,7 @@
                 if (countTextarea() < setting.maxTextAreaLength) {
                     $('._inf_button_plus').prop('disabled', false).attr('title', '');
                 }
+                update();
             });
             if (setting.cssClassForButtonMinus !== '') {
                 minusButton.addClass(setting.cssClassForButtonMinus);
@@ -111,6 +112,7 @@
                 if (countTextarea() === setting.maxTextAreaLength) {
                     $('._inf_button_plus').prop('disabled', true).attr('title', 'これ以上増やせません');
                 }
+                update();
             });
             if (setting.cssClassForButtonPlus !== '') {
                 minusButton.addClass(setting.cssClassForButtonPlus);
@@ -119,6 +121,47 @@
             div.append(plusButton);
 
             return div;
+        }
+
+        function update()
+        {
+            reset();
+
+            let textArray = getResult();
+            let count = 0;
+            $('.' + setting.textareaClass).each(function () {
+                $('#' + setting.outputTextElementBaseID + '_' + (count+1)).val(textArray[count]);
+                count++;
+            });
+            $('#' + setting.outputCountElementID).val(textArray.length);
+        }
+
+        function restore(target, targetData, groupIndex)
+        {
+            console.log(targetData);
+
+            let isRestore = false;
+
+            for(let i = 0; i < setting.maxTextAreaLength; i++)
+            {
+                const value = $('#' + setting.outputTextElementBaseID + '_' + (i+1)).val();
+                if(value.indexOf(targetData) === 1)
+                {
+                    const initValue = value.substring(value.indexOf('】:')+2);
+                    //要素を作成する
+                    target.append(generateTextarea(groupIndex,initValue));
+                    isRestore = true;
+                }
+            }
+            return isRestore;
+        }
+
+        function reset()
+        {
+            for(let i = 0; i < setting.maxTextAreaLength; i++)
+            {
+                $('#' + setting.outputTextElementBaseID + '_' + (i+1)).val('');
+            }
         }
     };
 
