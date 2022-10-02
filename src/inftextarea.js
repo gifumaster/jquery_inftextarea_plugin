@@ -1,8 +1,6 @@
 (function ($) {
     $.fn.infTextarea = function (options) {
         let defaults = {
-            // 最初に生成するテキストエリアの数
-            initialTextAreaLength: 1,
             // テキストエリアの最大数
             maxTextAreaLength: 10,
             // ボタンの表示名
@@ -15,7 +13,8 @@
             // テキストのカウント対象のクラス。（基本いじらなくて良い）複数種類設置する場合に指定する。
             textareaClass: '_inf_target_textarea',
             // 要素に結果を出力する場合に指定。
-            outputTextElementBaseID: ''
+            outputTextElementBaseID: '',
+            outputCountElementID:''
         }
         let setting = $.extend(defaults, options);
 
@@ -24,7 +23,9 @@
         }
 
         let groupCount = 0;
-        return this.each(function () {
+        const length = this.length;
+
+        return this.each(function (index) {
             const localCount = groupCount;
             let $this = $(this);
 
@@ -33,11 +34,14 @@
 
             if(!result)
             {
-                for (let i = 0; i < setting.initialTextAreaLength; i++) {
-                    $this.append(generateTextarea(localCount));
-                }
+                $this.append(generateTextarea(localCount));
             }
             groupCount++;
+
+            if(index === (length -1))
+            {
+                update();
+            }
         });
 
         function countTextarea() {
