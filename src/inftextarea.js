@@ -2,13 +2,12 @@
     $.fn.infTextarea = function (options) {
         let defaults = {
             // テキストエリアの最大数
-            maxTextAreaLength: 10,
+            maxTextAreaLength: 12,
+            // IndexString
+            indexPrefixString: '・',
             // ボタンの表示名
             buttonPlusString: '+',
             buttonMinusString: '-',
-            // data-nameデリミタ
-            dataNameStartDelimiter: '【',
-            dataNameEndDelimiter: '】',
             // 各要素のCSS用クラス
             cssClassForTextarea: '',
             cssClassForButtonMinus: '',
@@ -32,8 +31,7 @@
             const localCount = groupCount;
             let $this = $(this);
 
-            const targetData = convertDataName($this.data('name'));
-            const result = restore($this,targetData,localCount);
+            const result = restore($this,localCount);
 
             if(!result)
             {
@@ -60,20 +58,15 @@
 
             $('.' + setting.textareaClass).each(function () {
                 const $this = $(this);
-                const title = convertDataName($this.parent().parent().data('name'));
+                const target = $(this).parent().parent().data('id');
 
                 if ($this.val() !== '') {
-                    const concatText = setting.dataNameStartDelimiter + title + setting.dataNameEndDelimiter + $this.val() + '\n';
-                    textArray.push(concatText);
+                    const concatText = setting.indexPrefixString + $this.val() + '\n';
+                    textArray.push({'id': target, 'text': concatText});
                 }
             });
 
             return textArray;
-        }
-
-        function  convertDataName(string)
-        {
-            return string.replace(setting.dataNameStartDelimiter,'').replace(setting.dataNameEndDelimiter,'');
         }
 
         function generateTextarea(groupCount,initValue = '') {
@@ -135,28 +128,29 @@
             reset();
 
             let textArray = getResult();
-            let count = 0;
-            $('.' + setting.textareaClass).each(function () {
-                $('#' + setting.outputTextElementBaseID + '_' + (count+1)).val(textArray[count]);
-                count++;
-            });
+            for(let i= 0; i < textArray.length; i++){
+                const value = $('#' + setting.outputTextElementBaseID + '_' + textArray[i].id).val();
+                $('#' + setting.outputTextElementBaseID + '_' + textArray[i].id).val(value + textArray[i].text);
+            }
             $('#' + setting.outputCountElementID).val(textArray.length);
         }
 
-        function restore(target, targetData, groupIndex)
+        function restore(target, groupIndex)
         {
             let isRestore = false;
 
-            for(let i = 0; i < setting.maxTextAreaLength; i++)
+            const value = $('#' + setting.outputTextElementBaseID + '_' + (groupIndex+1)).val();
+            console.log({value});
+
+            //分解する
+            const array = value.split('\n');
+            console.log({array});
+            for(let i = 0; i < array.length; i++)
             {
-                const value = $('#' + setting.outputTextElementBaseID + '_' + (i+1)).val();
-                if(value.indexOf(targetData) === 1)
-                {
-                    const initValue = value.substring(value.indexOf(setting.dataNameEndDelimiter)+setting.dataNameEndDelimiter.length);
-                    //要素を作成する
-                    target.append(generateTextarea(groupIndex,initValue));
-                    isRestore = true;
-                }
+                const initValue = array[i].substring(setting.indexPrefixString.length);
+                //要素を作成する
+                target.append(generateTextarea(groupIndex,initValue));
+                isRestore = true;
             }
             return isRestore;
         }
