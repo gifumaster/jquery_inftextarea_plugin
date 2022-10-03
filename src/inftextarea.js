@@ -6,6 +6,9 @@
             // ボタンの表示名
             buttonPlusString: '+',
             buttonMinusString: '-',
+            // data-nameデリミタ
+            dataNameStartDelimiter: '【',
+            dataNameEndDelimiter: '】',
             // 各要素のCSS用クラス
             cssClassForTextarea: '',
             cssClassForButtonMinus: '',
@@ -60,7 +63,7 @@
                 const title = convertDataName($this.parent().parent().data('name'));
 
                 if ($this.val() !== '') {
-                    const concatText = '【' + title + '】：' + $this.val() + '\n';
+                    const concatText = setting.dataNameStartDelimiter + title + setting.dataNameEndDelimiter + $this.val() + '\n';
                     textArray.push(concatText);
                 }
             });
@@ -68,9 +71,9 @@
             return textArray;
         }
 
-        function convertDataName(string)
+        function  convertDataName(string)
         {
-            return string.replace('【','').replace('】','');
+            return string.replace(setting.dataNameStartDelimiter,'').replace(setting.dataNameEndDelimiter,'');
         }
 
         function generateTextarea(groupCount,initValue = '') {
@@ -142,8 +145,6 @@
 
         function restore(target, targetData, groupIndex)
         {
-            console.log(targetData);
-
             let isRestore = false;
 
             for(let i = 0; i < setting.maxTextAreaLength; i++)
@@ -151,7 +152,7 @@
                 const value = $('#' + setting.outputTextElementBaseID + '_' + (i+1)).val();
                 if(value.indexOf(targetData) === 1)
                 {
-                    const initValue = value.substring(value.indexOf('】:')+2);
+                    const initValue = value.substring(value.indexOf(setting.dataNameEndDelimiter)+setting.dataNameEndDelimiter.length);
                     //要素を作成する
                     target.append(generateTextarea(groupIndex,initValue));
                     isRestore = true;
